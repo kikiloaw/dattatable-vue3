@@ -1,6 +1,6 @@
 {
   "name": "fahad-select",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "multi select for laravel and vue  or vue inertia",
   "main": "vite.config.js",
   "scripts": {

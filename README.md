@@ -28,7 +28,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import FahadSelect from 'fahad-select';
+
+//important usage update
+import { FahadSelect } from 'fahad-select';
 const callMe = selectedData => {
 
 }

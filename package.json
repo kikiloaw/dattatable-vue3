@@ -1,6 +1,6 @@
 {
 	"name": "fahad-select",
-	"version": "2.0.0",
+	"version": "2.1.1",
 	"description": "multi select for laravel and vue or vue inertia",
 	"type": "module",
 	"files": [
@@ -23,6 +23,8 @@
 	},
 	"keywords": [
 		"fahadselect",
+		"fahad select",
+		"fahad-select",
 		"multiselect",
 		"multiselect-laravel",
 		"vue-backend-dropdown",

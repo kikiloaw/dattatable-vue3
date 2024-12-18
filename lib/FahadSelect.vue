@@ -118,7 +118,7 @@ const onSearchChange = (search) => {
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
 
-<style>
+<style scoped>
 .multiselect__content-wrapper {
 	max-height: 300px !important;
 	overflow-y: auto;

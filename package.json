@@ -4,7 +4,8 @@
 	"description": "multi select for laravel and vue or vue inertia",
 	"type": "module",
 	"files": [
-		"dist"
+		"dist",
+		"styles.css"
 	],
 	"main": "./dist/fahad-select.umd.cjs",
 	"module": "./dist/fahad-select.js",

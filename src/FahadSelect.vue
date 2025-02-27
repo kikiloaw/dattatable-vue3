@@ -27,25 +27,11 @@
                 </span>
             </template>
 
+          <template v-slot:tag="{ option, handleTagRemove, disabled }">
+             <span v-html="renderOption(option)"></span>
+          </template>
         </VueMultiselect>
     </div>
-
-
-  <div><label class="typo__label">Custom option template</label>
-    <multiselect id="custom-options" v-model="value" placeholder="Fav No Man’s Sky path" label="title" track-by="title" :options="options"
-                 :option-height="104" :custom-label="customLabel" :show-labels="false">
-      <template #singleLabel="props"><img class="option__image" :src="props.option.img"
-                                          alt="No Man’s Sky"/><span class="option__desc"><span
-          class="option__title">{{ props.option.title }}</span></span></template>
-      <template #option="props"><img class="option__image" :src="props.option.img" alt="No Man’s Sky"/>
-        <div class="option__desc"><span class="option__title">{{ props.option.title }}</span><span
-            class="option__small">{{ props.option.desc }}</span></div>
-      </template>
-    </multiselect>
-    <pre class="language-json"><code>{{ value }}</code></pre>
-  </div>
-
-
 
 </template>
 

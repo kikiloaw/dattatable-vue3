@@ -1,8 +1,10 @@
 {
   "name": "fahad-select",
-  "version": "3.0",
+  "version": "3.0.6",
   "description": "A custom Vue select component",
-  "main": "index.js",
+  "main": "dist/fahad-select.umd.js",
+  "module": "dist/fahad-select.mjs",
+  "files": ["dist", "src"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build"
@@ -10,7 +12,18 @@
   "keywords": [
     "vue",
     "select",
-    "component"
+    "component",
+    "fahadselect",
+    "fahad select",
+    "fahad-select",
+    "multiselect",
+    "multiselect-laravel",
+    "vue-backend-dropdown",
+    "laravel-select-vue",
+    "async-select-vue",
+    "vue-backend-multiselect",
+    "select2-like-vue",
+    "dynamic-select-vue"
   ],
   "author": "Ghandi Galila, Abdul Pangandaman",
   "license": "MIT",

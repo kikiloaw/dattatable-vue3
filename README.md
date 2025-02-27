@@ -2,6 +2,13 @@
 
 **fahad-select** is a Vue.js component built using `vue-multiselect`, designed for seamless integration with backend systems such as Laravel. It functions as a dynamic, API-driven select dropdown similar to `Select2`, but customized for Vue applications.
 
+## Big Update Fix
+importing to vue has an error
+now you can simply
+```bash
+import FahadSelect from 'fahad-select';
+import 'fahad-select/dist/style.css';
+````
 ## Features
 
 - **Vue.js based**: Built with Vue.js for easy integration with Vue applications.
@@ -123,6 +130,3 @@ public function dropdownSearch_address(Request $request){
 
 This project is licensed under the MIT License.
 
----
-
-Feel free to customize this `README.md` as needed!

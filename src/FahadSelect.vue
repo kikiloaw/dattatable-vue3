@@ -19,22 +19,50 @@
                 <span v-html="renderOption(option)"></span>
             </template>
 
-            <template #multiple-label="{ option }">
-                <span v-html="renderOption(option)"></span>
+            <template #selection="{ values, isOpen }">
+                <span v-if="values.length && !isOpen" class="multiselect__selection">
+                    <template v-for="value in values" :key="value.id">
+                        <span v-html="renderOption(value)" class="multiselect__tag"></span>
+                    </template>
+                </span>
             </template>
 
         </VueMultiselect>
     </div>
+
+
+  <div><label class="typo__label">Custom option template</label>
+    <multiselect id="custom-options" v-model="value" placeholder="Fav No Man’s Sky path" label="title" track-by="title" :options="options"
+                 :option-height="104" :custom-label="customLabel" :show-labels="false">
+      <template #singleLabel="props"><img class="option__image" :src="props.option.img"
+                                          alt="No Man’s Sky"/><span class="option__desc"><span
+          class="option__title">{{ props.option.title }}</span></span></template>
+      <template #option="props"><img class="option__image" :src="props.option.img" alt="No Man’s Sky"/>
+        <div class="option__desc"><span class="option__title">{{ props.option.title }}</span><span
+            class="option__small">{{ props.option.desc }}</span></div>
+      </template>
+    </multiselect>
+    <pre class="language-json"><code>{{ value }}</code></pre>
+  </div>
+
+
+
 </template>
 
 <script setup>
 import { nextTick, onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 import VueMultiselect from 'vue-multiselect';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';  // Changed from 'lodash/debounce'
 const renderOption = (option) => {
-    return option.html || option[props.label];
-}
+  console.log('Rendering option:', {
+    option,
+    html: option.html,
+    label: option[props.label],
+    result: option.html || `<span>${option[props.label]}</span>`
+  });
+  return option.html || `<span>${option[props.label]}</span>`;
+};
 const props = defineProps({
     modelValue: Object,
     searchRoute: {
@@ -64,8 +92,7 @@ const emit = defineEmits(['update:modelValue', 'triggerChange','reload']);
 
 const data = ref([]);
 const loading = ref(false);
-const selectedOption = ref(props.modelValue);
-
+const selectedOption = ref(props.modelValue || []);
 watch(selectedOption, (newValue) => {
     emit('update:modelValue', newValue);
     emit('triggerChange', newValue);
@@ -84,7 +111,10 @@ const fetchData = async (search) => {
                 param: props.param
             },
         });
-        data.value = response.data.results;
+        data.value = response.data.results.map(item => ({
+          id: item.id,
+          html: item.html || `<span>${item[props.label]}</span>` // Fallback to plain text in <span>
+        }));
     } catch (error) {
         console.error(error);
     } finally {
@@ -134,5 +164,23 @@ const onSearchChange = (search) => {
 	padding: 8px;
 	border-radius: 4px;
 
+}
+
+.multiselect__tag {
+  display: inline-block;
+  padding: 4px 8px;
+  margin-right: 4px;
+  background: transparent;
+  color: #000; /* Match single-select text color */
+  border: 1px solid #ccc; /* Optional border for visibility */
+  border-radius: 4px;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.multiselect__selection {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 </style>

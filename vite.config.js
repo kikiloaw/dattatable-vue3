@@ -10,13 +10,12 @@ export default defineConfig({
             fileName: 'fahad-select',
         },
         rollupOptions: {
-            external: ['vue', 'axios', 'vue-multiselect', 'lodash/debounce'],
+            external: ['vue', 'axios', 'lodash'], // Change to 'lodash'
             output: {
                 globals: {
                     vue: 'Vue',
                     axios: 'Axios',
-                    'vue-multiselect': 'VueMultiselect',
-                    'lodash/debounce': 'debounce',
+                    lodash: '_', // lodash global namespace
                 },
             },
         },

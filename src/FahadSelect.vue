@@ -27,20 +27,12 @@
                 </span>
             </template>
 
-            <!--          <template v-slot:tag="{ option }">-->
-            <!--             <span v-html="renderOption(option)"></span>-->
-            <!--          </template>-->
-
-
-
             <template v-slot:tag="{ option, remove }">
                 <div class="multiselect__tag">
                     <span v-html="renderOption(option)"></span>
                     <i class="multiselect__tag-icon" @click.prevent @mousedown.prevent.stop="remove(option, $event)" />
                 </div>
             </template>
-
-
 
         </VueMultiselect>
     </div>
@@ -53,12 +45,6 @@ import axios from 'axios';
 import VueMultiselect from 'vue-multiselect';
 import { debounce } from 'lodash';  // Changed from 'lodash/debounce'
 const renderOption = (option) => {
-    console.log('Rendering option:', {
-        option,
-        html: option.html,
-        label: option[props.label],
-        result: option.html || `<span>${option[props.label]}</span>`
-    });
     return option.html || `<span>${option[props.label]}</span>`;
 };
 const props = defineProps({

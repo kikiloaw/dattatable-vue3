@@ -77,6 +77,9 @@ group data works even if :multiple="false" is disabled, but you cannot select by
 not only you can use the label and id. but you can add more data to the options. and try to  console.log the selected option. you can see the others data if you console log.
 so you can that to other means
 
+## latest fix 5/12/2025
+fix assigning data after calling reload(). the problem is that when reload is not done immediately but the assign the data is done already, data is being cleared. for short the assigning data is being done before reload
+
 
 ```php
 return = [

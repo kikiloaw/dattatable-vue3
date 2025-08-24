@@ -1,4 +1,4 @@
-import { createElementBlock as f, openBlock as c, withKeys as b, normalizeClass as M, withModifiers as o, renderSlot as g, createElementVNode as p, createVNode as C, createCommentVNode as y, withDirectives as w, Fragment as P, renderList as F, toDisplayString as S, vShow as $, Transition as N, withCtx as L, normalizeStyle as D, createTextVNode as B, ref as k, watch as A, onMounted as j, unref as U, nextTick as I } from "vue";
+import { createElementBlock as c, openBlock as f, withKeys as b, normalizeClass as M, withModifiers as o, renderSlot as g, createElementVNode as p, createBlock as j, createVNode as C, createCommentVNode as y, withDirectives as $, Fragment as P, renderList as F, toDisplayString as S, vShow as B, Transition as N, withCtx as w, normalizeStyle as D, createTextVNode as L, Teleport as U, ref as k, watch as A, onMounted as I, unref as X, nextTick as Y } from "vue";
 import J from "axios";
 import { debounce as Q } from "lodash";
 function E(e) {
@@ -7,10 +7,10 @@ function E(e) {
 function W(e) {
   return (...t) => !e(...t);
 }
-function X(e, t) {
+function Z(e, t) {
   return e === void 0 && (e = "undefined"), e === null && (e = "null"), e === !1 && (e = "false"), e.toString().toLowerCase().indexOf(t.trim()) !== -1;
 }
-function Y(e) {
+function x(e) {
   return e.filter((t) => !t.$isLabel);
 }
 function H(e, t) {
@@ -20,7 +20,7 @@ function H(e, t) {
   }), n.concat(r[e])) : n, []);
 }
 const K = (...e) => (t) => e.reduce((i, n) => n(i), t);
-var Z = {
+var _ = {
   data() {
     return {
       search: "",
@@ -344,7 +344,7 @@ var Z = {
     flatAndStrip(e) {
       return K(
         H(this.groupValues, this.groupLabel),
-        Y
+        x
       )(e);
     },
     /**
@@ -540,7 +540,7 @@ var Z = {
      * @returns {Array}
      */
     filterOptions(e, t, i, n) {
-      return t ? e.filter((r) => X(n(r, i), t)).sort((r, a) => typeof this.filteringSortFunc == "function" ? this.filteringSortFunc(r, a) : n(r, i).length - n(a, i).length) : e;
+      return t ? e.filter((r) => Z(n(r, i), t)).sort((r, a) => typeof this.filteringSortFunc == "function" ? this.filteringSortFunc(r, a) : n(r, i).length - n(a, i).length) : e;
     },
     /**
      *
@@ -563,7 +563,7 @@ var Z = {
       });
     }
   }
-}, x = {
+}, ee = {
   data() {
     return {
       pointer: 0,
@@ -628,10 +628,12 @@ var Z = {
       this.filteredOptions.length > 0 && this.select(this.filteredOptions[this.pointer], e), this.pointerReset();
     },
     pointerForward() {
-      this.pointer < this.filteredOptions.length - 1 && (this.pointer++, this.$refs.list.scrollTop <= this.pointerPosition - (this.visibleElements - 1) * this.optionHeight && (this.$refs.list.scrollTop = this.pointerPosition - (this.visibleElements - 1) * this.optionHeight), this.filteredOptions[this.pointer] && this.filteredOptions[this.pointer].$isLabel && !this.groupSelect && this.pointerForward()), this.pointerDirty = !0;
+      var e;
+      this.pointer < this.filteredOptions.length - 1 && (this.pointer++, ((e = this.$refs.list) == null ? void 0 : e.scrollTop) <= this.pointerPosition - (this.visibleElements - 1) * this.optionHeight && (this.$refs.list.scrollTop = this.pointerPosition - (this.visibleElements - 1) * this.optionHeight), this.filteredOptions[this.pointer] && this.filteredOptions[this.pointer].$isLabel && !this.groupSelect && this.pointerForward()), this.pointerDirty = !0;
     },
     pointerBackward() {
-      this.pointer > 0 ? (this.pointer--, this.$refs.list.scrollTop >= this.pointerPosition && (this.$refs.list.scrollTop = this.pointerPosition), this.filteredOptions[this.pointer] && this.filteredOptions[this.pointer].$isLabel && !this.groupSelect && this.pointerBackward()) : this.filteredOptions[this.pointer] && this.filteredOptions[0].$isLabel && !this.groupSelect && this.pointerForward(), this.pointerDirty = !0;
+      var e;
+      this.pointer > 0 ? (this.pointer--, ((e = this.$refs.list) == null ? void 0 : e.scrollTop) >= this.pointerPosition && (this.$refs.list.scrollTop = this.pointerPosition), this.filteredOptions[this.pointer] && this.filteredOptions[this.pointer].$isLabel && !this.groupSelect && this.pointerBackward()) : this.filteredOptions[this.pointer] && this.filteredOptions[0].$isLabel && !this.groupSelect && this.pointerForward(), this.pointerDirty = !0;
     },
     pointerReset() {
       this.closeOnSelect && (this.pointer = 0, this.$refs.list && (this.$refs.list.scrollTop = 0));
@@ -645,7 +647,7 @@ var Z = {
   }
 }, R = {
   name: "vue-multiselect",
-  mixins: [Z, x],
+  mixins: [_, ee],
   compatConfig: {
     MODE: 3,
     ATTR_ENUMERATED_COERCION: !1
@@ -814,7 +816,22 @@ var Z = {
     required: {
       type: Boolean,
       default: !1
+    },
+    /**
+     * Uses Vue Teleport's feature. Teleports the open dropdown to the bottom of the body element
+     * @default false
+     * @type {Boolean}
+     */
+    useTeleport: {
+      type: Boolean,
+      default: !1
     }
+  },
+  data() {
+    return {
+      dropdownStyles: {},
+      ready: !1
+    };
   },
   computed: {
     hasOptionGroup() {
@@ -862,14 +879,28 @@ var Z = {
     isRequired() {
       return this.required === !1 ? !1 : this.internalValue.length <= 0;
     }
+  },
+  watch: {
+    isOpen(e) {
+      e && (this.useTeleport ? (this.ready = !1, this.$nextTick(() => {
+        const t = this.$el.getBoundingClientRect();
+        this.dropdownStyles = {
+          position: "absolute",
+          top: `${t.bottom + window.scrollY}px`,
+          left: `${t.left + window.scrollX}px`,
+          width: `${t.width}px`,
+          zIndex: 9999
+        }, this.ready = !0;
+      })) : this.ready = !0);
+    }
   }
 };
-const _ = ["tabindex", "aria-expanded", "aria-owns", "aria-activedescendant"], ee = {
+const te = ["tabindex", "aria-expanded", "aria-owns", "aria-activedescendant"], ie = {
   ref: "tags",
   class: "multiselect__tags"
-}, te = { class: "multiselect__tags-wrap" }, ie = ["textContent"], se = ["onKeypress", "onMousedown"], le = ["textContent"], re = { class: "multiselect__spinner" }, ne = ["name", "id", "spellcheck", "placeholder", "required", "value", "disabled", "tabindex", "aria-label", "aria-controls"], ae = ["id", "aria-multiselectable"], oe = { key: 0 }, ue = { class: "multiselect__option" }, he = ["aria-selected", "id", "role"], de = ["onClick", "onMouseenter", "data-select", "data-selected", "data-deselect"], pe = ["data-select", "data-deselect", "onMouseenter", "onMousedown"], fe = { class: "multiselect__option" }, ce = { class: "multiselect__option" };
-function ge(e, t, i, n, r, a) {
-  return c(), f("div", {
+}, se = { class: "multiselect__tags-wrap" }, le = ["textContent"], re = ["onKeypress", "onMousedown"], ne = ["textContent"], ae = { class: "multiselect__spinner" }, oe = ["name", "id", "spellcheck", "placeholder", "required", "value", "disabled", "tabindex", "aria-label", "aria-controls"], ue = ["id", "aria-multiselectable"], he = { key: 0 }, de = { class: "multiselect__option" }, pe = ["aria-selected", "id", "role"], fe = ["onClick", "onMouseenter", "data-select", "data-selected", "data-deselect"], ce = ["data-select", "data-deselect", "onMouseenter", "onMousedown"], ge = { class: "multiselect__option" }, me = { class: "multiselect__option" };
+function be(e, t, i, n, r, a) {
+  return f(), c("div", {
     tabindex: e.searchable ? -1 : i.tabindex,
     class: M([{ "multiselect--active": e.isOpen, "multiselect--disabled": i.disabled, "multiselect--above": a.isAbove, "multiselect--has-options-group": a.hasOptionGroup }, "multiselect"]),
     onFocus: t[14] || (t[14] = (s) => e.activate()),
@@ -900,7 +931,7 @@ function ge(e, t, i, n, r, a) {
     g(e.$slots, "clear", { search: e.search }),
     p(
       "div",
-      ee,
+      ie,
       [
         g(e.$slots, "selection", {
           search: e.search,
@@ -908,11 +939,11 @@ function ge(e, t, i, n, r, a) {
           values: a.visibleValues,
           isOpen: e.isOpen
         }, () => [
-          w(p(
+          $(p(
             "div",
-            te,
+            se,
             [
-              (c(!0), f(
+              (f(!0), c(
                 P,
                 null,
                 F(a.visibleValues, (s, d) => g(e.$slots, "tag", {
@@ -920,7 +951,7 @@ function ge(e, t, i, n, r, a) {
                   search: e.search,
                   remove: e.removeElement
                 }, () => [
-                  (c(), f(
+                  (f(), c(
                     "span",
                     {
                       class: "multiselect__tag",
@@ -931,13 +962,13 @@ function ge(e, t, i, n, r, a) {
                     [
                       p("span", {
                         textContent: S(e.getOptionLabel(s))
-                      }, null, 8, ie),
+                      }, null, 8, le),
                       p("i", {
                         tabindex: "1",
                         onKeypress: b(o((v) => e.removeElement(s), ["prevent"]), ["enter"]),
                         onMousedown: o((v) => e.removeElement(s), ["prevent"]),
                         class: "multiselect__tag-icon"
-                      }, null, 40, se)
+                      }, null, 40, re)
                     ],
                     32
                     /* NEED_HYDRATION */
@@ -950,33 +981,33 @@ function ge(e, t, i, n, r, a) {
             512
             /* NEED_PATCH */
           ), [
-            [$, a.visibleValues.length > 0]
+            [B, a.visibleValues.length > 0]
           ]),
           e.internalValue && e.internalValue.length > i.limit ? g(e.$slots, "limit", { key: 0 }, () => [
             p("strong", {
               class: "multiselect__strong",
               textContent: S(i.limitText(e.internalValue.length - i.limit))
-            }, null, 8, le)
+            }, null, 8, ne)
           ]) : y("v-if", !0)
         ]),
         C(N, { name: "multiselect__loading" }, {
-          default: L(() => [
+          default: w(() => [
             g(e.$slots, "loading", {}, () => [
-              w(p(
+              $(p(
                 "div",
-                re,
+                ae,
                 null,
                 512
                 /* NEED_PATCH */
               ), [
-                [$, i.loading]
+                [B, i.loading]
               ])
             ])
           ]),
           _: 3
           /* FORWARDED */
         }),
-        e.searchable ? (c(), f("input", {
+        e.searchable ? (f(), c("input", {
           key: 0,
           ref: "search",
           name: i.name,
@@ -1003,8 +1034,8 @@ function ge(e, t, i, n, r, a) {
           onKeypress: t[8] || (t[8] = b(o((s) => e.addPointerElement(s), ["prevent", "stop", "self"]), ["enter"])),
           class: "multiselect__input",
           "aria-controls": "listbox-" + e.id
-        }, null, 44, ne)) : y("v-if", !0),
-        a.isSingleLabelVisible ? (c(), f(
+        }, null, 44, oe)) : y("v-if", !0),
+        a.isSingleLabelVisible ? (f(), c(
           "span",
           {
             key: 1,
@@ -1013,7 +1044,7 @@ function ge(e, t, i, n, r, a) {
           },
           [
             g(e.$slots, "singleLabel", { option: a.singleValue }, () => [
-              B(
+              L(
                 S(e.currentOptionLabel),
                 1
                 /* TEXT */
@@ -1023,7 +1054,7 @@ function ge(e, t, i, n, r, a) {
           32
           /* NEED_HYDRATION */
         )) : y("v-if", !0),
-        a.isPlaceholderVisible ? (c(), f(
+        a.isPlaceholderVisible ? (f(), c(
           "span",
           {
             key: 2,
@@ -1032,7 +1063,7 @@ function ge(e, t, i, n, r, a) {
           },
           [
             g(e.$slots, "placeholder", {}, () => [
-              B(
+              L(
                 S(e.placeholder),
                 1
                 /* TEXT */
@@ -1046,150 +1077,151 @@ function ge(e, t, i, n, r, a) {
       512
       /* NEED_PATCH */
     ),
-    C(N, {
-      name: "multiselect",
-      persisted: ""
-    }, {
-      default: L(() => [
-        w(p(
-          "div",
-          {
-            class: "multiselect__content-wrapper",
-            onFocus: t[12] || (t[12] = (...s) => e.activate && e.activate(...s)),
-            tabindex: "-1",
-            onMousedown: t[13] || (t[13] = o(() => {
-            }, ["prevent"])),
-            style: D({ maxHeight: e.optimizedHeight + "px" }),
-            ref: "list"
-          },
-          [
-            p("ul", {
-              class: "multiselect__content",
-              style: D(a.contentStyle),
-              role: "listbox",
-              id: "listbox-" + e.id,
-              "aria-multiselectable": e.multiple
-            }, [
-              g(e.$slots, "beforeList"),
-              e.multiple && e.max === e.internalValue.length ? (c(), f("li", oe, [
-                p("span", ue, [
-                  g(e.$slots, "maxElements", {}, () => [
-                    B(
-                      "Maximum of " + S(e.max) + " options selected. First remove a selected option to select another.",
-                      1
-                      /* TEXT */
-                    )
-                  ])
-                ])
-              ])) : y("v-if", !0),
-              !e.max || e.internalValue.length < e.max ? (c(!0), f(
-                P,
-                { key: 1 },
-                F(e.filteredOptions, (s, d) => (c(), f("li", {
-                  class: "multiselect__element",
-                  key: d,
-                  "aria-selected": e.isSelected(s),
-                  id: e.id + "-" + d,
-                  role: s && (s.$isLabel || s.$isDisabled) ? null : "option"
-                }, [
-                  s && (s.$isLabel || s.$isDisabled) ? y("v-if", !0) : (c(), f("span", {
-                    key: 0,
-                    class: M([e.optionHighlight(d, s), "multiselect__option"]),
-                    onClick: o((v) => e.select(s), ["stop"]),
-                    onMouseenter: o((v) => e.pointerSet(d), ["self"]),
-                    "data-select": s && s.isTag ? e.tagPlaceholder : a.selectLabelText,
-                    "data-selected": a.selectedLabelText,
-                    "data-deselect": a.deselectLabelText
-                  }, [
-                    g(e.$slots, "option", {
-                      option: s,
-                      search: e.search,
-                      index: d
-                    }, () => [
-                      p(
-                        "span",
-                        null,
-                        S(e.getOptionLabel(s)),
+    (f(), j(U, {
+      to: "body",
+      disabled: !i.useTeleport
+    }, [
+      C(N, { name: "multiselect" }, {
+        default: w(() => [
+          e.isOpen && r.ready ? (f(), c(
+            "div",
+            {
+              key: 0,
+              class: "multiselect__content-wrapper",
+              onFocus: t[12] || (t[12] = (...s) => e.activate && e.activate(...s)),
+              tabindex: "-1",
+              onMousedown: t[13] || (t[13] = o(() => {
+              }, ["prevent"])),
+              style: D([r.dropdownStyles, { maxHeight: e.optimizedHeight + "px" }]),
+              ref: "list"
+            },
+            [
+              p("ul", {
+                class: "multiselect__content",
+                style: D(a.contentStyle),
+                role: "listbox",
+                id: "listbox-" + e.id,
+                "aria-multiselectable": e.multiple
+              }, [
+                g(e.$slots, "beforeList"),
+                e.multiple && e.max === e.internalValue.length ? (f(), c("li", he, [
+                  p("span", de, [
+                    g(e.$slots, "maxElements", {}, () => [
+                      L(
+                        "Maximum of " + S(e.max) + " options selected. First remove a selected option to select another.",
                         1
                         /* TEXT */
                       )
                     ])
-                  ], 42, de)),
-                  s && (s.$isLabel || s.$isDisabled) ? (c(), f("span", {
-                    key: 1,
-                    "data-select": e.groupSelect && a.selectGroupLabelText,
-                    "data-deselect": e.groupSelect && a.deselectGroupLabelText,
-                    class: M([e.groupHighlight(d, s), "multiselect__option"]),
-                    onMouseenter: o((v) => e.groupSelect && e.pointerSet(d), ["self"]),
-                    onMousedown: o((v) => e.selectGroup(s), ["prevent"])
+                  ])
+                ])) : y("v-if", !0),
+                !e.max || e.internalValue.length < e.max ? (f(!0), c(
+                  P,
+                  { key: 1 },
+                  F(e.filteredOptions, (s, d) => (f(), c("li", {
+                    class: "multiselect__element",
+                    key: d,
+                    "aria-selected": e.isSelected(s),
+                    id: e.id + "-" + d,
+                    role: s && (s.$isLabel || s.$isDisabled) ? null : "option"
                   }, [
-                    g(e.$slots, "option", {
-                      option: s,
-                      search: e.search,
-                      index: d
-                    }, () => [
-                      p(
-                        "span",
-                        null,
-                        S(e.getOptionLabel(s)),
-                        1
-                        /* TEXT */
-                      )
+                    s && (s.$isLabel || s.$isDisabled) ? y("v-if", !0) : (f(), c("span", {
+                      key: 0,
+                      class: M([e.optionHighlight(d, s), "multiselect__option"]),
+                      onClick: o((v) => e.select(s), ["stop"]),
+                      onMouseenter: o((v) => e.pointerSet(d), ["self"]),
+                      "data-select": s && s.isTag ? e.tagPlaceholder : a.selectLabelText,
+                      "data-selected": a.selectedLabelText,
+                      "data-deselect": a.deselectLabelText
+                    }, [
+                      g(e.$slots, "option", {
+                        option: s,
+                        search: e.search,
+                        index: d
+                      }, () => [
+                        p(
+                          "span",
+                          null,
+                          S(e.getOptionLabel(s)),
+                          1
+                          /* TEXT */
+                        )
+                      ])
+                    ], 42, fe)),
+                    s && (s.$isLabel || s.$isDisabled) ? (f(), c("span", {
+                      key: 1,
+                      "data-select": e.groupSelect && a.selectGroupLabelText,
+                      "data-deselect": e.groupSelect && a.deselectGroupLabelText,
+                      class: M([e.groupHighlight(d, s), "multiselect__option"]),
+                      onMouseenter: o((v) => e.groupSelect && e.pointerSet(d), ["self"]),
+                      onMousedown: o((v) => e.selectGroup(s), ["prevent"])
+                    }, [
+                      g(e.$slots, "option", {
+                        option: s,
+                        search: e.search,
+                        index: d
+                      }, () => [
+                        p(
+                          "span",
+                          null,
+                          S(e.getOptionLabel(s)),
+                          1
+                          /* TEXT */
+                        )
+                      ])
+                    ], 42, ce)) : y("v-if", !0)
+                  ], 8, pe))),
+                  128
+                  /* KEYED_FRAGMENT */
+                )) : y("v-if", !0),
+                $(p(
+                  "li",
+                  null,
+                  [
+                    p("span", ge, [
+                      g(e.$slots, "noResult", { search: e.search }, () => [
+                        t[20] || (t[20] = L("No elements found. Consider changing the search query."))
+                      ])
                     ])
-                  ], 42, pe)) : y("v-if", !0)
-                ], 8, he))),
-                128
-                /* KEYED_FRAGMENT */
-              )) : y("v-if", !0),
-              w(p(
-                "li",
-                null,
-                [
-                  p("span", fe, [
-                    g(e.$slots, "noResult", { search: e.search }, () => [
-                      t[20] || (t[20] = B("No elements found. Consider changing the search query."))
+                  ],
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [B, i.showNoResults && e.filteredOptions.length === 0 && e.search && !i.loading]
+                ]),
+                $(p(
+                  "li",
+                  null,
+                  [
+                    p("span", me, [
+                      g(e.$slots, "noOptions", {}, () => [
+                        t[21] || (t[21] = L("List is empty."))
+                      ])
                     ])
-                  ])
-                ],
-                512
-                /* NEED_PATCH */
-              ), [
-                [$, i.showNoResults && e.filteredOptions.length === 0 && e.search && !i.loading]
-              ]),
-              w(p(
-                "li",
-                null,
-                [
-                  p("span", ce, [
-                    g(e.$slots, "noOptions", {}, () => [
-                      t[21] || (t[21] = B("List is empty."))
-                    ])
-                  ])
-                ],
-                512
-                /* NEED_PATCH */
-              ), [
-                [$, i.showNoOptions && (e.options.length === 0 || a.hasOptionGroup === !0 && e.filteredOptions.length === 0) && !e.search && !i.loading]
-              ]),
-              g(e.$slots, "afterList")
-            ], 12, ae)
-          ],
-          36
-          /* STYLE, NEED_HYDRATION */
-        ), [
-          [$, e.isOpen]
-        ])
-      ]),
-      _: 3
-      /* FORWARDED */
-    })
-  ], 42, _);
+                  ],
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [B, i.showNoOptions && (e.options.length === 0 || a.hasOptionGroup === !0 && e.filteredOptions.length === 0) && !e.search && !i.loading]
+                ]),
+                g(e.$slots, "afterList")
+              ], 12, ue)
+            ],
+            36
+            /* STYLE, NEED_HYDRATION */
+          )) : y("v-if", !0)
+        ]),
+        _: 3
+        /* FORWARDED */
+      })
+    ], 8, ["disabled"]))
+  ], 42, te);
 }
-R.render = ge;
-const me = ["selectable"], be = ["innerHTML", "selectable"], ve = ["innerHTML"], ye = {
+R.render = be;
+const ye = ["selectable"], ve = ["innerHTML", "selectable"], Se = ["innerHTML"], Ve = {
   key: 0,
   class: "multiselect__selection"
-}, Se = ["innerHTML"], Ve = { class: "multiselect__tag" }, Oe = ["innerHTML"], Le = ["onMousedown"], ke = {
+}, Oe = ["innerHTML"], we = { class: "multiselect__tag" }, Le = ["innerHTML"], $e = ["onMousedown"], Me = {
   __name: "FahadSelect",
   props: {
     modelValue: {
@@ -1231,7 +1263,7 @@ const me = ["selectable"], be = ["innerHTML", "selectable"], ve = ["innerHTML"],
           }), V.value = u;
         } else
           d.value.some((l) => l.id === u.id) || d.value.push(u), V.value = u;
-    }, { immediate: !0 }), j(() => {
+    }, { immediate: !0 }), I(() => {
       T("");
     });
     const T = async (u) => {
@@ -1277,7 +1309,7 @@ const me = ["selectable"], be = ["innerHTML", "selectable"], ve = ["innerHTML"],
       s.value = u.some((h) => h.group);
     }, { deep: !0, immediate: !0 });
     const G = async () => {
-      await I(), await T(""), V.value = r.multiple ? [] : null;
+      await Y(), await T(""), V.value = r.multiple ? [] : null;
     };
     t({
       reload: G
@@ -1288,8 +1320,8 @@ const me = ["selectable"], be = ["innerHTML", "selectable"], ve = ["innerHTML"],
       var h;
       ((h = V.value) == null ? void 0 : h.name) !== u && q(u);
     };
-    return (u, h) => (c(), f("div", null, [
-      C(U(R), {
+    return (u, h) => (f(), c("div", null, [
+      C(X(R), {
         modelValue: V.value,
         "onUpdate:modelValue": h[4] || (h[4] = (l) => V.value = l),
         options: d.value,
@@ -1306,8 +1338,8 @@ const me = ["selectable"], be = ["innerHTML", "selectable"], ve = ["innerHTML"],
         "group-label": s.value ? "group" : void 0,
         "group-select": s.value ? e.multiple : !1
       }, {
-        option: L(({ option: l, selectable: m }) => [
-          l.$isLabel ? (c(), f("div", {
+        option: w(({ option: l, selectable: m }) => [
+          l.$isLabel ? (f(), c("div", {
             key: 0,
             class: "multiselect__option--group",
             selectable: s.value,
@@ -1317,37 +1349,37 @@ const me = ["selectable"], be = ["innerHTML", "selectable"], ve = ["innerHTML"],
             }, ["prevent"])),
             onClick: h[2] || (h[2] = o(() => {
             }, ["prevent"]))
-          }, S(l.$groupLabel), 41, me)) : (c(), f("div", {
+          }, S(l.$groupLabel), 41, ye)) : (f(), c("div", {
             key: 1,
             innerHTML: n(l),
             selectable: s.value
-          }, null, 8, be))
+          }, null, 8, ve))
         ]),
-        singleLabel: L(({ option: l, remove: m }) => [
+        singleLabel: w(({ option: l, remove: m }) => [
           p("span", {
             innerHTML: n(l)
-          }, null, 8, ve)
+          }, null, 8, Se)
         ]),
-        selection: L(({ values: l, isOpen: m }) => [
-          l.length && !m ? (c(), f("span", ye, [
-            (c(!0), f(P, null, F(l, (O) => (c(), f("span", {
+        selection: w(({ values: l, isOpen: m }) => [
+          l.length && !m ? (f(), c("span", Ve, [
+            (f(!0), c(P, null, F(l, (O) => (f(), c("span", {
               key: O.id,
               innerHTML: n(O),
               class: "multiselect__tag"
-            }, null, 8, Se))), 128))
+            }, null, 8, Oe))), 128))
           ])) : y("", !0)
         ]),
-        tag: L(({ option: l, remove: m }) => [
-          p("div", Ve, [
+        tag: w(({ option: l, remove: m }) => [
+          p("div", we, [
             p("span", {
               innerHTML: n(l)
-            }, null, 8, Oe),
+            }, null, 8, Le),
             p("i", {
               class: "multiselect__tag-icon",
               onClick: h[3] || (h[3] = o(() => {
               }, ["prevent"])),
               onMousedown: o((O) => m(l, O), ["prevent", "stop"])
-            }, null, 40, Le)
+            }, null, 40, $e)
           ])
         ]),
         _: 1
@@ -1356,5 +1388,5 @@ const me = ["selectable"], be = ["innerHTML", "selectable"], ve = ["innerHTML"],
   }
 };
 export {
-  ke as default
+  Me as default
 };

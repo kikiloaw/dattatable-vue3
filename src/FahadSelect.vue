@@ -219,6 +219,11 @@ const onSearchChange = (search) => {
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style>
 
+.multiselect__option--selected {
+  background: #3ed15e !important;
+  color: white  !important;
+}
+
 .multiselect__single {
     max-width: 100%; /* Match the parent container's width */
     text-overflow: ellipsis;

@@ -1,31 +1,30 @@
 {
-  "name": "fahad-select",
-  "version": "3.2.5",
-  "description": "A custom Vue select component",
-  "main": "dist/fahad-select.umd.js",
-  "module": "dist/fahad-select.mjs",
-  "files": ["dist", "src"],
+  "name": "@kikiloaw/datatable-vue3",
+  "version": "1.0.3",
+  "description": "A datatable caching component",
+  "main": "dist/datatable-vue3.umd.js",
+  "module": "dist/datatable-vue3.mjs",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build"
   },
   "keywords": [
     "vue",
-    "select",
+    "datatable",
+    "cache",
     "component",
-    "fahadselect",
-    "fahad select",
-    "fahad-select",
-    "multiselect",
-    "multiselect-laravel",
-    "vue-backend-dropdown",
-    "laravel-select-vue",
-    "async-select-vue",
-    "vue-backend-multiselect",
-    "select2-like-vue",
-    "dynamic-select-vue"
+    "datatable-vue3",
+    "table-cache",
+    "vue-datatable",
+    "vue-cache",
+    "vue3",
+    "@kikiloaw/datatable-vue3"
   ],
-  "author": "Ghandi Galila, Abdul Pangandaman",
+  "author": "Ghandi Galila",
   "license": "MIT",
   "peerDependencies": {
     "axios": "^1.8.1",
@@ -33,10 +32,19 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@types/pdfmake": "^0.2.11",
     "@vitejs/plugin-vue": "^5.0.0",
     "vite": "^5.4.14"
   },
   "dependencies": {
-    "vue-multiselect": "^3.2.0"
+    "datatables.net-buttons-bs": "^3.2.2",
+    "datatables.net-buttons-dt": "^3.2.2",
+    "datatables.net-dt": "^2.2.2",
+    "datatables.net-fixedcolumns-dt": "^5.0.4",
+    "datatables.net-fixedheader-dt": "^4.0.1",
+    "datatables.net-responsive-dt": "^3.0.3",
+    "datatables.net-select-dt": "^3.0.0",
+    "datatables.net-vue3": "^3.0.4",
+    "pdfmake": "^0.2.7"
   }
 }

@@ -6,8 +6,8 @@ export default defineConfig({
     build: {
         lib: {
             entry: './index.js',
-            name: 'FahadSelect',
-            fileName: 'fahad-select',
+            name: 'DatatableVue3',
+            fileName: 'datatable-vue3',
         },
         rollupOptions: {
             external: ['vue', 'axios', 'lodash'], // Change to 'lodash'

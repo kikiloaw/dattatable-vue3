@@ -1,4 +1,3 @@
-import FahadSelect from './src/FahadSelect.vue';
-import 'vue-multiselect/dist/vue-multiselect.css'; // Import from node_modules
+import DatatableVue3 from './src/TableData.vue';
 
-export default FahadSelect;
+export default DatatableVue3;

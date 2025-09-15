@@ -1,6 +1,6 @@
 {
   "name": "@kikiloaw/datatable-vue3",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A datatable caching component",
   "main": "dist/datatable-vue3.umd.js",
   "module": "dist/datatable-vue3.mjs",
@@ -45,6 +45,7 @@
     "datatables.net-responsive-dt": "^3.0.3",
     "datatables.net-select-dt": "^3.0.0",
     "datatables.net-vue3": "^3.0.4",
+    "jszip": "^3.10.1",
     "pdfmake": "^0.2.7"
   }
 }

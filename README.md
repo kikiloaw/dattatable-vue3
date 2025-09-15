@@ -7,7 +7,7 @@
 - **Ready to Use**: No complex setup required - just import and use
 - **Full DataTables.net Support**: All DataTables.net features including sorting, searching, pagination
 - **Vue 3 Compatible**: Built specifically for Vue 3 with Composition API
-- **Export Capabilities**: Built-in support for PDF, CSV, copy, and print
+- **Export Capabilities**: Built-in support for PDF, CSV, copy, and print and now excelHtml5, excel
 - **Responsive Design**: Mobile-friendly responsive tables
 - **Fixed Columns/Headers**: Support for fixed columns and headers
 - **Row Selection**: Built-in row selection functionality
@@ -18,6 +18,11 @@
 ```bash
 npm install @kikiloaw/datatable-vue3@latest
 ```
+
+
+## New Export added
+now excelHtml5, excel
+
 
 ## Basic Usage
 

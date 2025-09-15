@@ -21,10 +21,11 @@
 </style>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-dt';
 DataTable.use(DataTablesCore);
+
 import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from "./vfs_fonts";
 pdfMake.vfs = pdfFonts.default;
@@ -38,6 +39,9 @@ import 'datatables.net-fixedheader-dt';
 import 'datatables.net-responsive-dt';
 import 'datatables.net-select-dt';
 
+// ✅ Proper fix for JSZip
+import JSZip from 'jszip';
+window.JSZip = JSZip;
 
 const table = ref();
 
